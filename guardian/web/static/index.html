@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure SLA Guardian - Cloud Native Protection</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>Azure Guardian</h2>
+                    <span class="badge-tag">CNP Engine v1.0</span>
+                </div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#dashboard" class="nav-item active">
+                    <span class="icon">📊</span> Overview
+                </a>
+                <a href="#assets" class="nav-item">
+                    <span class="icon">☁️</span> Cloud Assets
+                </a>
+                <a href="#snapshots" class="nav-item">
+                    <span class="icon">📸</span> Snapshots & SLA
+                </a>
+                <a href="#anomalies" class="nav-item">
+                    <span class="icon">🛡️</span> Threat & Entropy
+                </a>
+                <a href="/docs" target="_blank" class="nav-item">
+                    <span class="icon">📑</span> Swagger API
+                </a>
+                <a href="/metrics" target="_blank" class="nav-item">
+                    <span class="icon">📈</span> Prometheus
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="mode-badge">
+                    <span class="pulse-dot"></span>
+                    <span id="cloud-mode-label">Mode: SIMULATOR</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <div>
+                    <h1>Cloud Native Protection & SLA Engine</h1>
+                    <p class="subtitle">Azure Storage & Disk Protection, Rate-Limited Resilience & Anomaly Detection</p>
+                </div>
+                <div class="action-buttons">
+                    <button id="btn-discover" class="btn btn-primary">
+                        <span>🔍 Discover Assets</span>
+                    </button>
+                    <button id="btn-chaos-429" class="btn btn-warning">
+                        <span id="label-chaos-429">⚡ Inject HTTP 429</span>
+                    </button>
+                    <button id="btn-chaos-ransomware" class="btn btn-danger">
+                        <span>☣️ Simulate Ransomware</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Metrics Cards -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span>Total Assets</span>
+                        <span class="metric-icon">☁️</span>
+                    </div>
+                    <div class="metric-value" id="val-total-assets">0</div>
+                    <div class="metric-footer" id="val-protected-assets">0 Protected with SLA</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span>Snapshots Orchestrated</span>
+                        <span class="metric-icon">📸</span>
+                    </div>
+                    <div class="metric-value" id="val-total-snapshots">0</div>
+                    <div class="metric-footer text-success">Point-in-time ready</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span>Entropy / Ransomware Alerts</span>
+                        <span class="metric-icon">🛡️</span>
+                    </div>
+                    <div class="metric-value text-danger" id="val-active-anomalies">0</div>
+                    <div class="metric-footer" id="val-anomaly-status">System Secure</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span>Azure 429 Throttling</span>
+                        <span class="metric-icon">⚡</span>
+                    </div>
+                    <div class="metric-value text-warning" id="val-429-count">0</div>
+                    <div class="metric-footer" id="val-avg-latency">Avg Latency: 0ms</div>
+                </div>
+            </section>
+
+            <!-- Security Alert Banner (hidden by default) -->
+            <div id="security-alert-box" class="alert-banner" style="display: none;">
+                <div class="alert-content">
+                    <span class="alert-icon">🚨</span>
+                    <div>
+                        <strong id="alert-title">SECURITY WARNING: Ransomware Entropy Surge Detected</strong>
+                        <p id="alert-desc">Anomalous high entropy signature detected on snapshot payload.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assets & SLA Policies Table -->
+            <section class="card section-spacing">
+                <div class="card-header">
+                    <h2>Discovered Azure Assets & SLA Status</h2>
+                    <span class="card-sub">Automatic discovery across Azure Resource Groups</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Region / Tier</th>
+                                <th>Size</th>
+                                <th>Assigned SLA</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assets-table-body">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">Click "Discover Assets" to scan the cloud.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Snapshots Table -->
+            <section class="card section-spacing">
+                <div class="card-header">
+                    <h2>Cloud Snapshots & Entropy Catalog</h2>
+                    <span class="card-sub">Shannon Entropy score: Normal (3.5 - 6.0) | Ransomware / Encrypted (> 7.2)</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Snapshot ID</th>
+                                <th>Asset ID</th>
+                                <th>Tier</th>
+                                <th>Entropy Score</th>
+                                <th>Created</th>
+                                <th>Expires (SLA)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="snapshots-table-body">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No snapshots recorded yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
