@@ -153,7 +153,7 @@ class OrchestrationService:
 
     async def get_latest_clean_recovery_point(self, db: AsyncSession, asset_id: int) -> Optional[Snapshot]:
         """
-        Rubrik Point-in-time recovery: finds the latest non-anomalous snapshot
+        Point-in-time recovery: finds the latest non-anomalous snapshot
         prior to any ransomware or corruption event.
         """
         stmt = (

@@ -17,7 +17,7 @@ def test_entropy_low_on_repetitive_data():
 def test_entropy_normal_text():
     # Natural language structured text is typically between 3.5 and 5.5
     text = (
-        b"Rubrik Cloud Native Protection orchestrates data management, "
+        b"Azure Cloud Native Protection orchestrates data management, "
         b"incremental snapshots, and disaster recovery across Microsoft Azure."
     ) * 10
     entropy = EntropyAnalyzer.calculate_entropy(text)

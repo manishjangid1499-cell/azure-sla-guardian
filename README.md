@@ -11,7 +11,7 @@
 
 <br/>
 
-**Enterprise-grade Cloud Native Data Protection (CNP) and disaster recovery orchestrator modeled after Rubrik's Cloud Architecture.**  
+**Enterprise-grade Cloud Native Data Protection (CNP) and disaster recovery orchestrator for Microsoft Azure.**  
 Orchestrates SLA snapshot policies for Azure Storage & Compute, enforces token-bucket resilience against HTTP 429 throttling, detects ransomware through Shannon entropy analysis, and guarantees clean point-in-time recovery.
 
 </div>
@@ -273,19 +273,6 @@ tests/test_rate_limiter.py::test_resilient_exceeds_max_retries   PASSED [100%]
 
 ============================= 13 passed in 1.46s =============================
 ```
-
----
-
-## 🎯 Rubrik & Enterprise Interview Talking Points
-
-### Q: "How does your system handle cloud API throttling?"
-> *"I implemented a Token-Bucket algorithm to smooth out bursty traffic before sending requests to the Azure REST API. For transient 429 and 503 responses, the execution wrapper applies full-jitter exponential backoff. Full jitter randomizes the delay between zero and the calculated exponential ceiling, preventing all workers from synchronizing their retries and causing subsequent rate-limit storms."*
-
-### Q: "How do you detect ransomware before it infects your backups?"
-> *"I built a security verification pipeline calculating Shannon Entropy $H(X)$ on the snapshot payload. Normal text and structured DB schemas have an entropy of 3.5 to 5.5, whereas AES-encrypted ciphertext exhibits pseudo-random properties with an entropy greater than 7.2. When entropy spikes or data modification exceeds 50%, the snapshot is marked `ANOMALOUS` and quarantined, and the engine flags the asset to prevent corrupted snapshots from becoming the recovery baseline."*
-
-### Q: "How do you guarantee clean point-in-time recovery?"
-> *"The recovery engine traverses backwards through the snapshot metadata catalog to find the latest snapshot with state `READY` and $H(X) < 7.2$. This ensures that even if ransomware encrypts an asset today, administrators can restore from the exact point-in-time before encryption occurred."*
 
 ---
 

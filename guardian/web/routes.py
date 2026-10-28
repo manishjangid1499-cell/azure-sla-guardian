@@ -115,7 +115,7 @@ async def trigger_snapshot(asset_id: int, db: AsyncSession = Depends(get_db)):
 
 @api_router.get("/recovery-point/{asset_id}", response_model=Optional[SnapshotResponse])
 async def get_latest_clean_recovery_point(asset_id: int, db: AsyncSession = Depends(get_db)):
-    """Rubrik Point-in-time recovery point lookup (filters out ransomware snapshots)."""
+    """Point-in-time recovery point lookup (filters out ransomware snapshots)."""
     if not orchestration_service:
         raise HTTPException(status_code=500, detail="Orchestration service not initialized")
     point = await orchestration_service.get_latest_clean_recovery_point(db, asset_id)
