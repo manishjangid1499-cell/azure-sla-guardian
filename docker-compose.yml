@@ -1,0 +1,20 @@
+services:
+  guardian-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: azure-sla-guardian
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - CLOUD_MODE=simulator
+      - DATABASE_URL=sqlite+aiosqlite:///./guardian.db
+      - RATE_LIMIT_TOKENS_PER_SEC=10.0
+      - ENTROPY_THRESHOLD=7.2
+    volumes:
+      - guardian_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  guardian_data:
